@@ -10,7 +10,8 @@
  * otherwise the last node or NULL.
  */
 listint_t *get_n_next(listint_t *node, size_t n)
-{size_t i = 0;
+{
+size_t i = 0;
 listint_t *res = NULL;
 res = node;
 for (i = 0; (i < n) && (res) && (res->next); i++)
