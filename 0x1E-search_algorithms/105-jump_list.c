@@ -1,36 +1,60 @@
+#include <math.h>
 #include "search_algos.h"
 
 /**
- * linear_skip - Searches using linear skip.
- * @list: A pointer to the  head of the linked list to search.
- * @value: The value to search for.
+ * get_n_next - Gets the nth node next to a given node.
+ * @node: The starting node.
+ * @n: The number of positions next to the node.
  *
- * Return: NULL, a pointer to the first node where the value is located.
+ * Return: The node n places next to the given node, \
+ * otherwise the last node or NULL.
  */
-skiplist_t *linear_skip(skiplist_t *list, int value)
+listint_t *get_n_next(listint_t *node, size_t n)
 {
-skiplist_t *node, *jump;
+size_t i = 0;
+listint_t *res = NULL;
+
+res = node;
+for (i = 0; (i < n) && (res) && (res->next); i++)
+res = res->next;
+return (res);
+}
+
+/**
+ * jump_list - Searches a value in a sorted linked list using a jump search.
+ * @list: The linked list to search in.
+ * @size: The length of the linked list.
+ * @value: The value to look for.
+ *
+ * Return: The node with the value in the linked list, otherwise NULL.
+ */
+listint_t *jump_list(listint_t *list, size_t size, int value)
+{
+size_t step, a = 0, b = 0;
+listint_t *node, *next;
+
 if (!list)
 return (NULL);
-for (node = jump = list; jump->next && jump->n < value;)
+step = (size_t)sqrt(size);
+node = list;
+next = get_n_next(node, step);
+while (node)
 {
-node = jump;
-if (jump->express)
+printf("Value checked at index [%d] = [%d]\n", (int)next->index, next->n);
+if ((next->n >= value) || (!next->next))
+break;
+node = next;
+next = get_n_next(node, step);
+}
+a = node->index;
+b = next->index;
+printf("Value found between indexes [%d] and [%d]\n", (int)a, (int)b);
+while (node)
 {
-jump = jump->express;
-printf("Value checked at index [%ld] = [%d]\n",
-jump->index, jump->n);
+printf("Value checked at index [%d] = [%d]\n", (int)node->index, node->n);
+if (node->n == value)
+return (node);
+node = node->next;
 }
-else
-{
-while (jump->next)
-jump = jump->next;
-}
-}
-printf("Value found between indexes [%ld] and [%ld]\n",
-node->index, jump->index);
-for (; node->index < jump->index && node->n < value; node = node->next)
-printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
-printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
-return (node->n == value ? node : NULL);
+return (NULL);
 }
